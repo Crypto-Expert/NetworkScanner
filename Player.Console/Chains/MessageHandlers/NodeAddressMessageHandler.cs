@@ -1,5 +1,5 @@
 ﻿using NBitcoin.Protocol;
-using NServiceBus;
+using SystemBus;
 using SystemBus.Commands;
 
 namespace NetworkScanner.CLI.Chains.MessageHandlers
@@ -22,8 +22,7 @@ namespace NetworkScanner.CLI.Chains.MessageHandlers
                     Port = address.Endpoint.Port,
                 };
 
-                await Program.EndpointInstance.SendLocal(command)
-                    .ConfigureAwait(false);
+                await BusManager.SendLocal(command);
             }
             //_logger.Debug("Processing Address Message: {0}", payload.ToString());
         }

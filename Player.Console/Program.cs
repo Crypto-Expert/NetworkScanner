@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using NLog;
-using NServiceBus;
 using NetworkScanner.CLI.Chains;
+using SystemBus;
 
 namespace NetworkScanner.CLI
 {
@@ -16,7 +16,6 @@ namespace NetworkScanner.CLI
             new DashMainNet()
         };
         private static ManualResetEvent ExitEvent = new ManualResetEvent(false);
-        public static IEndpointInstance EndpointInstance = null;
 
         private static void SetupLogging()
         {
@@ -34,19 +33,10 @@ namespace NetworkScanner.CLI
             LogManager.Configuration = config;
         }
 
-        private static async Task SetupServiceBus()
-        {
-            var endpointConfiguration = new EndpointConfiguration("NetworkScanner");
-            var transport = endpointConfiguration.UseTransport<LearningTransport>();
-            EndpointInstance = await Endpoint.Start(endpointConfiguration)
-                .ConfigureAwait(false);
-
-        }
-
         static async Task Main()
         {
             SetupLogging();
-            await SetupServiceBus();
+            await BusManager.StartServiceBus();
             Console.CancelKeyPress += (sender, eventArgs) =>
             {
                 eventArgs.Cancel = true;
@@ -68,8 +58,7 @@ namespace NetworkScanner.CLI
             {
                 chain.Stop();
             }
-            await EndpointInstance.Stop()
-                .ConfigureAwait(false);
+            await BusManager.StopServiceBus();
             Environment.Exit(0);
         }
     }
