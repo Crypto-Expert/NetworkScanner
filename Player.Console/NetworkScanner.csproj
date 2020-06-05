@@ -14,9 +14,8 @@
   <ItemGroup>
     <Folder Include="Chains\" />
     <Folder Include="Chains\MessageHandlers\" />
-    <Folder Include="SystemBus\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SystemBus\SystemBus.csproj" />
+    <ProjectReference Include="..\SystemBus\Common.csproj" />
   </ItemGroup>
 </Project>

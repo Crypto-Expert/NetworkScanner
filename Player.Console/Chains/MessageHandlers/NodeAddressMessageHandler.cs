@@ -1,6 +1,5 @@
 ﻿using NBitcoin.Protocol;
-using SystemBus;
-using SystemBus.Commands;
+using Common.Commands;
 
 namespace NetworkScanner.CLI.Chains.MessageHandlers
 {
@@ -11,18 +10,19 @@ namespace NetworkScanner.CLI.Chains.MessageHandlers
             if (message.Message.Command != "addr")
                 return;
 
+            NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
             AddrPayload payload = (AddrPayload)message.Message.Payload;
 
-            NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
             foreach(NetworkAddress address in payload.Addresses)
             {
                 AddNodeCommand command = new AddNodeCommand
                 {
+                    Chain = chain.ChainName,
                     Address = address.Endpoint.Address.ToString(),
                     Port = address.Endpoint.Port,
                 };
+                chain.SendCommand(command).GetAwaiter().GetResult();
             }
-            //_logger.Debug("Processing Address Message: {0}", payload.ToString());
         }
     }
 }

@@ -4,12 +4,12 @@ using System.IO;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using Common;
 using NBitcoin;
 using NBitcoin.Protocol;
 using NBitcoin.Protocol.Behaviors;
 using NetworkScanner.CLI.Chains.MessageHandlers;
 using NServiceBus;
-using SystemBus;
 
 namespace NetworkScanner.CLI.Chains
 {
@@ -32,7 +32,8 @@ namespace NetworkScanner.CLI.Chains
 
         public void RegisterEventHandlers()
         {
-            ChainEvent += HeadersMessageHandler.Process;
+            ChainEvent += NodeAddressMessageHandler.Process;
+            //ChainEvent += HeadersMessageHandler.Process;
         }
 
         #endregion
@@ -110,6 +111,7 @@ namespace NetworkScanner.CLI.Chains
 
                     node.MessageReceived += (node1, message) =>
                     {
+                        Console.WriteLine("Message Received");
                         SaveChainData();
                     };
 
@@ -134,6 +136,12 @@ namespace NetworkScanner.CLI.Chains
 
         #endregion
 
+        #region Event Bus
+        public async Task SendCommand(ICommand command)
+        {
+            await this.EndpointInstance.Send(command);
+        }
+        #endregion
         public async void Dispose() => await StopAsync();
     }
 }
