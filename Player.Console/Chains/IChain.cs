@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using NBitcoin.Protocol;
 
 namespace NetworkScanner.CLI.Chains
 {
@@ -8,6 +7,6 @@ namespace NetworkScanner.CLI.Chains
         Task Connect();
         void LoadChainData();
         void SaveChainData();
-        void Stop();
+        Task StopAsync();
     }
 }

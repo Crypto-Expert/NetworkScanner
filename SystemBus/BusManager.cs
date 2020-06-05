@@ -1,45 +1,30 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using NServiceBus;
 
 namespace SystemBus
 {
     public static class BusManager
     {
-        private static IEndpointInstance EndpointInstance = null;
-
-        public static IEndpointInstance GetServiceBus()
+        public static async Task<IEndpointInstance> StartServiceBus(string name)
         {
-            return EndpointInstance;
-        }
-
-        public static async Task StartServiceBus()
-        {
-            if (GetServiceBus() != null)
-                return;
-
-            var endpointConfiguration = new EndpointConfiguration("NetworkScanner");
+            var endpointConfiguration = new EndpointConfiguration(name);
             var transport = endpointConfiguration.UseTransport<LearningTransport>();
-            EndpointInstance = await Endpoint.Start(endpointConfiguration)
+            var EndpointInstance = await Endpoint.Start(endpointConfiguration)
                 .ConfigureAwait(false);
+
+            return EndpointInstance;
 
         }
 
-        public static async Task StopServiceBus()
+        public static async Task StopServiceBus(IEndpointInstance endpointInstance)
         {
-            if (GetServiceBus() == null)
-                return;
-
-            await EndpointInstance.Stop()
+            await endpointInstance.Stop()
                 .ConfigureAwait(false);
         }
 
-        public static async Task SendLocal(object command)
-        {
-            if (GetServiceBus() == null)
-                return;
-
-            await EndpointInstance.SendLocal(command)
+        public static async Task SendLocal(object command, IEndpointInstance endpointInstance)
+        { 
+            await endpointInstance.SendLocal(command)
                 .ConfigureAwait(false);
         }
     }

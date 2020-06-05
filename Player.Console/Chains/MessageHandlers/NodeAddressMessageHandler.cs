@@ -6,7 +6,7 @@ namespace NetworkScanner.CLI.Chains.MessageHandlers
 {
     public static class NodeAddressMessageHandler
     {
-        public static async void ProcessAsync(Node node, IncomingMessage message)
+        public static void Process(BaseChain chain, Node node, IncomingMessage message)
         {
             if (message.Message.Command != "addr")
                 return;
@@ -21,8 +21,6 @@ namespace NetworkScanner.CLI.Chains.MessageHandlers
                     Address = address.Endpoint.Address.ToString(),
                     Port = address.Endpoint.Port,
                 };
-
-                await BusManager.SendLocal(command);
             }
             //_logger.Debug("Processing Address Message: {0}", payload.ToString());
         }
